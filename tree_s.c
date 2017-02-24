@@ -55,7 +55,9 @@ tree *chg_node(tree *root)
 tree *min_node(tree *root, int *data)
 {
 	if(root->l)
+	{
 		root->l = min_node(root->l, data);
+	}
 	else
 	{
 		*data = root->data;
