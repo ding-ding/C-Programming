@@ -52,13 +52,13 @@ rb_tree *rl_rot(rb_tree *p, rb_tree *c)
 
 int rb_chk(rb_tree **p, rb_tree **c)
 {
-	if((*p)->color && (*c)->color)
+	if((*p)->color && (*c)->color)	//	
 		return RED;
 	else
 		return BLACK;
 }
 
-void rb_modify(rb_tree **p, rb_tree **c, rb_tree **pp)
+void rb_rotation(rb_tree **pp, rb_tree **p)
 {
 	if(pp->l->color && pp->r->color) // case 1 pp -> red, other black
 	{
@@ -66,45 +66,47 @@ void rb_modify(rb_tree **p, rb_tree **c, rb_tree **pp)
 	}
 	else if(pp->l->color && !pp->r->color)	// case 2-1 lr
 	{
-
+		lr_rot(*pp, *p);
 	}
 	else if(!pp->l->color && pp->r->color)	//case 2-2 rl
 	{
-
+		rl_rot(*pp, *p);
 	}
 }
 
-// void rb_ins(rb_tree **p, rb_tree **c, rb_tree **pp, int data)
-// {
-// 	if(!(*c))
-// 		*c = get_node(data);
-// 	else if(data < (*c)->data)
-// 		rb_ins(c, &(*c)->l, p, data);
-// 	else if(data > (*c)->data)
-// 		rb_ins(c, &(*c)->r, p, data);
-// 	if(rb_chk(p, c))
-// 	{
+// Recursion
+void rb_ins(rb_tree **p, rb_tree **c, rb_tree **pp, int data)
+{
+	if(!(*c))
+		*c = get_node(data);
+	else if(data < (*c)->data)
+		rb_ins(c, &(*c)->l, p, data);
+	else if(data > (*c)->data)
+		rb_ins(c, &(*c)->r, p, data);
+	if(rb_chk(p, c))
+	{
+		rb_rotation(pp, p);
+	}
+}
 
+// Iteration
+// void rb_ins(rb_tree **root, int data)
+// {
+// 	int abs;
+
+
+// 0
+// 	while(1)
+// 	{
+// 		if(!(*root))
+// 			*root = get_node(data);
+// 		else if(data < (*root)->data)
+
+// 		else if(data > (*root)->data)
+
+// 		if(rb_tree)
 // 	}
 // }
-
-void rb_ins(rb_tree **root, int data)
-{
-	int abs;
-
-
-0
-	while(1)
-	{
-		if(!(*root))
-			*root = get_node(data);
-		else if(data < (*root)->data)
-
-		else if(data > (*root)->data)
-
-		if(rb_tree)
-	}
-}
 
 void main(void)
 {

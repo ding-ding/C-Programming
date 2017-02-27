@@ -50,9 +50,7 @@ avl_tree *ll_rot(avl_tree *p, avl_tree *c)
 	p->l = c->r;
 	c->r = p;
 	p->lev = lev_modify(p);
-	printf("p ->lev = %d\n", p->lev);
 	c->lev = lev_modify(c);
-	printf("c ->lev = %d\n", c->lev);
 	return c;
 }
 
@@ -79,7 +77,6 @@ avl_tree *rl_rot(avl_tree *p, avl_tree *c)
 
 avl_tree *rotation(avl_tree *root, int ret)
 {
-	printf("rotation = %p\n", root);
 	switch(ret)
 	{
 		case LL:
@@ -130,7 +127,6 @@ void avl_ins(avl_tree **root, int data)
 	abs = (abs > 0) ? abs : -abs;
 	if(abs > 1){
 		*root = rotation(*root, rot_chk(*root, data));
-		printf("avl_ins root = %p\n", *root);
 	}
 }
 
@@ -173,65 +169,13 @@ void print_tree(avl_tree *root)
 		else
 			printf(", left = NULL");
 		if(root->r)
-			printf(", right = %4d", root->r->data);
+			printf(", right = %4d\n", root->r->data);
 		else
-			printf(", right = NULL");
-		printf("   %p\n", root);
+			printf(", right = NULL\n");
 		print_tree(root->l);
 		print_tree(root->r);
 	}
 }
-
-// avl_tree** search_tree(avl_tree **p, avl_tree **c, int data)
-// {
-	
-// 	if(!c) return 0;
-// 	if((*c)->data == data)
-// 	{
-// 		printf("search_tree = %p\n", c);
-// 		return c;
-// 	} 
-// 	*p = c;
-// 	if(data < (*c)->data)
-// 		search_tree(p, &(*c)->l, data);
-// 	else
-// 		search_tree(p, &(*c)->r, data);
-// }
-
-// void avl_del(avl_tree **root, int data)
-// {
-// 	int num = data;
-// 	int abs;
-// 	avl_tree **tmp = root;
-	
-// 	avl_tree **c = search_tree(&tmp, &tmp, data);
-// 	avl_tree **p = &tmp;
-// 	tmp = &p;
-// 	printf("previous\n");
-// 	printf("tmp = %d \n", tmp->data);
-// 	printf("p = %p\n", *p);
-
-// 	if((*c)->l && (*c)->r)
-// 	{
-// 		(*c)->r = min_tree((*c)->r, &num);
-// 		(*c)->data = num;
-// 	}
-// 	else
-// 		*c = chg_tree(*c);
-
-// 	printf("print p \n");
-// 	print_tree(*p);
-// 	(*p)->lev = lev_modify(*p);
-// 	abs = lev_chk(*p);
-// 	abs = (abs > 0) ? abs : -abs;
-// 	if(abs > 1)
-// 		*p = rotation(*p, rot_chk(*p, num));
-// 	printf("print p \n");
-// 	print_tree(*p);
-// 	printf("\n\n");
-// 	printf("tmp = %p \n", tmp);
-// 	printf("p = %p\n", *p);
-// }
 
 void avl_del(avl_tree **p, avl_tree **c, int data)
 {
@@ -260,39 +204,6 @@ void avl_del(avl_tree **p, avl_tree **c, int data)
 		avl_del(c, &(*c)->r, data);
 }
 
-// void avl_del(avl_tree **root, int data)
-// {
-// 	int num = data;
-// 	int abs;
-// 	avl_tree *tmp = *root;
-	
-// 	avl_tree **c = search_tree(root, root, data);
-// 	avl_tree **p = &tmp;
-	
-
-// 	if((*c)->l && (*c)->r)
-// 	{
-// 		(*c)->r = min_tree((*c)->r, &num);
-// 		(*c)->data = num;
-// 	}
-// 	else
-// 		*c = chg_tree(*c);
-
-// 	(*root)->lev = lev_modify(*root);
-// 	printf("%p\n", (*c));
-// 	printf("root -> lev = %d\n", (*root)->lev);
-// 	abs = lev_chk(*p);
-// 	abs = (abs > 0) ? abs : -abs;
-// 	if(abs > 1)
-// 		*root = rotation(*root, rot_chk(*root, num));
-// 	printf("print p \n");
-// 	printf("\n\n");
-// 	printf("tmp = %p \n", tmp);
-// 	printf("p = %p\n", *p);
-// }
-
-
-
 int main(void)
 {
 	int i;
@@ -305,10 +216,9 @@ int main(void)
 
 	printf("after insertion\n");
 	print_tree(root);
-	printf("\n\n");
-	avl_del(&root, &root, 5);
-
-	printf("\n\n\n");
+	avl_del(&root, &root, 4);
+	printf("\n");
+	printf("after 4 delete\n");
 	print_tree(root);
 
 	return 0;
