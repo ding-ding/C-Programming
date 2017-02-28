@@ -5,14 +5,18 @@
 #define 	BLACK	0
 #define 	RED 	1
 
-typedef struct rb_tree{
+struct node{
 	int data;
 	int color;
-	struct rb_tree l;
-	struct rb_tree r;
-}rb_tree;
+	struct node *l;
+	struct node *r;
+};
+typedef struct node rb_tree;
 
-rb_tree *get_node(data)
+int lev = 0;
+int tmp = 0;
+
+rb_tree *get_node(int data)
 {
 	rb_tree *tmp = (rb_tree *)malloc(sizeof(rb_tree));
 	// tmp = (rb_tree *)malloc(sizeof(rb_tree));
@@ -52,44 +56,67 @@ rb_tree *rl_rot(rb_tree *p, rb_tree *c)
 
 int rb_chk(rb_tree **p, rb_tree **c)
 {
-	if((*p)->color && (*c)->color)	//	
+	if((*p)->color && (*c)->color)
 		return RED;
 	else
 		return BLACK;
 }
 
-void rb_rotation(rb_tree **pp, rb_tree **p)
+void rb_modify(rb_tree **p, rb_tree **c, rb_tree **pp)
 {
-	if(pp->l->color && pp->r->color) // case 1 pp -> red, other black
-	{
-
-	}
-	else if(pp->l->color && !pp->r->color)	// case 2-1 lr
-	{
-		lr_rot(*pp, *p);
-	}
-	else if(!pp->l->color && pp->r->color)	//case 2-2 rl
-	{
-		rl_rot(*pp, *p);
+	printf("rb_modify\n");
+	if(!(*pp)->l && !(*pp)->r) return;
+	else if(!(*pp)->l && (*pp)->r)	rl_rot(*pp, *p);
+	else if((*pp)->l && !(*pp)->r)	lr_rot(*pp, *p);
+	else {
+		if((*pp)->l->color && (*pp)->r->color) // case 1 pp -> red, other black
+		{
+			(*pp)->color = RED;
+			(*pp)->l->color = BLACK;
+			(*pp)->r->color = BLACK;
+			if(lev == 1) {
+				(*pp)->color = BLACK;
+				lev--;
+			}
+		}
+		else if((*pp)->l->color && !(*pp)->r->color)	// case 2-1 lr
+		{
+			lr_rot(*pp, *p);
+		}
+		else if(!(*pp)->l->color && (*pp)->r->color)	//case 2-2 rl
+		{
+			rl_rot(*pp, *p);
+		}	
 	}
 }
+$ rm -fr .git
+$ git init
+$ git remote add origin your-git-remote-url
+$ git fetch
+$ git reset --hard origin/master
+$ git branch --set-upstream-to=origin/master master
 
-// Recursion
 void rb_ins(rb_tree **p, rb_tree **c, rb_tree **pp, int data)
 {
-	if(!(*c))
+	printf("rb_ins\n");
+	if(!(*c)){
 		*c = get_node(data);
-	else if(data < (*c)->data)
+	}
+	else if(data < (*c)->data){
+		if(!(*c)->color) lev++;
 		rb_ins(c, &(*c)->l, p, data);
-	else if(data > (*c)->data)
+	}
+	else if(data > (*c)->data){
+		if(!(*c)->color) lev++;
 		rb_ins(c, &(*c)->r, p, data);
+	}
+	if(!(*c)->color) lev--;
 	if(rb_chk(p, c))
 	{
-		rb_rotation(pp, p);
+		rb_modify(p, c, pp);
 	}
 }
 
-// Iteration
 // void rb_ins(rb_tree **root, int data)
 // {
 // 	int abs;
@@ -108,7 +135,7 @@ void rb_ins(rb_tree **p, rb_tree **c, rb_tree **pp, int data)
 // 	}
 // }
 
-void main(void)
+int main(void)
 {
 
 	int i;
@@ -118,7 +145,8 @@ void main(void)
 
 	for(i = 0; i < 12; i++)
 	{
-		// rb_ins(&root, &root, &root, data[i]);
+		printf("lev = %d\n", lev);
+		rb_ins(&root, &root, &root, data[i]);
 
 
 	}
