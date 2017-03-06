@@ -89,12 +89,6 @@ void rb_modify(rb_tree **p, rb_tree **c, rb_tree **pp)
 		}	
 	}
 }
-$ rm -fr .git
-$ git init
-$ git remote add origin your-git-remote-url
-$ git fetch
-$ git reset --hard origin/master
-$ git branch --set-upstream-to=origin/master master
 
 void rb_ins(rb_tree **p, rb_tree **c, rb_tree **pp, int data)
 {
