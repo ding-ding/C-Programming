@@ -36,11 +36,11 @@ void mod_contents(char *con, char *find, char *mod, int fd)
 		if(!strncmp(&con[i], find, f_len)){
 			strncpy(&tmp[t_save], mod, m_len);
 			// strncpy(&tmp[save + m_len], &con[save + f_len], c_len - save - f_len);
-			t_save = save + m_len;
+			t_save += m_len;
 		}
 		else{
 			strncpy(&tmp[t_save], &con[i], strlen(&con[i]));
-			t_save = save + strlen(&con[i]);
+			t_save += strlen(&con[i]);
 		}
 	}
 

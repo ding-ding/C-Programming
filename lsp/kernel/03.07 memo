@@ -1,0 +1,53 @@
+vi ~/.vimrc
+
+
+tar zxvf linux-4.4.32.tar.gz
+
+
+
+vi -t task_struct
+
+
+
+
+
+tar zxvf linux-4.4.32.tar.gz
+
+task_struct (task)
+
+file * fd_array[] (open, close, read, )
+
+
+space 1page
+enter 1line
+
+
+
+User 
+	open read write close 
+
+---------------------------------
+
+kernel
+
+	sys_open()
+
+user 가 open 을 호출 하면 interrupt가 발생한다. 
+레지스터를 공유하지 않기 때문에
+thread_struct, task_struct 가 보조를 해준다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
