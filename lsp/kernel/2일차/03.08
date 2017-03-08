@@ -1,0 +1,5 @@
+Blocking vs Non-Blocking
+
+CPU 자원을 잡고 있느냐 마느냐에 대한 차이!
+Blocking 을 하면 특정 조건을 만족 할 때까지 Resource 활용 불가
+Non-Blocking 은 상관없이 준비되면 실행 아니면 대기
