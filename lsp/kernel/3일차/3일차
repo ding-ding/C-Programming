@@ -1,0 +1,32 @@
+* fifo
+
+mkfifo myfifo =-> mkfifo[파이프 만들기] "myfifo" 
+cat > myfifo =-> cat 에서 출력하는 결과를 myfifo 로 전달한다 라는 뜻
+
+
+* fcntl
+
+
+F_SETFL : arg 에 이정된 값으로 파일지정자 fd 의 플래그를 재 설정 한다. 
+	O_APPEND, O_NONBLOCK, O_ASYNC 등 설정 
+
+* ls -al /dev
+
+- c : char
+crw-------  1 root root     10, 175  3월  9 10:07 agpgart
+
+- b : block device 
+brw-rw----+ 1 root cdrom    11,   0  3월  9 10:07 sr0
+
+- l : link 
+lrwxrwxrwx  1 root root          15  3월  9 10:07 stdout -> /proc/self/fd/1
+
+- d : directory
+drwxr-xr-x  2 root root          60  3월  9 10:07 vfio	
+	
+- p : (pipe) -> char 와 통폐합
+prw-rw-r-- 1 koitt koitt 0  3월  9 10:56 myfifo	
+
+char 는 순서가 있고 , block 은 순서가 없다.	
+대신 block 은 동작하는 범위가 정해져 있다. (ram, sda) 4096 byte 단위로 
+char 는 정해진 사이즈가 없음
