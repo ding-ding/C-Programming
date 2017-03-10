@@ -1,0 +1,8 @@
+https://www.lua.org/pil/contents.html
+
+alt + prn/sc : 현재창 스크린샷
+ls -R : 현재 디렉토리의 자식 파일까지 모두 검사/ 출력
+mkdir -p test/proj/fail/log : test/proj/fail/log dir 만들기 
+
+
+http://class.gnu.ac.kr/~sooya/pdf/system/
