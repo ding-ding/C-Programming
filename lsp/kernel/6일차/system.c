@@ -4,5 +4,5 @@ int main(void)
 {
 	system("data");
 	printf("after\n");
-	return 0;
+	return 0;:
 }
