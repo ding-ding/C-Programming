@@ -1,0 +1,24 @@
+UMA, NUMA, Node(Bank), Zone, Page, Buddy, Slob, Paging(2단계, 4단계)
+task_struct
+	mm_struct
+		pgd_t *pgd (cr3)
+		vm_area_struct
+		[VM Range]
+		mm_rb
+		mmap_cache
+		MMU
+		
+
+node(뱅크를 표현하는 구조) = (bank) : 접근 속도가 같은 메모리의 집합  
+=> pglist_data(NUMA 구조)라는 배열을 통해 관리 접근가능 , config_page_data(UMA)
+하나의 노드는 pg_data_t 구조체를 통해 표현
+
+
+task_struct
+-> mm_struct
+--> vm_area_struct 
+
+
+세그먼트 (linux = region) : 리눅스 커널은 가상 메모리 공간 중 같은 속성을 가지며 연속인 영역을 region이라 부른다. 
+
+
