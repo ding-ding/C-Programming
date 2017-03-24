@@ -60,7 +60,7 @@ int syscall_hooking_init(void) {
 void syscall_hooking_cleanup(void) {
  unsigned long cr0 = read_cr0();
  write_cr0(cr0 & ~0x00010000);
- sys_call_table[__NR_open] = orig_call;
+ // sys_call_table[__NR_open] = orig_call;
  write_cr0(cr0);
  printk("<0> Module cleanup\n");
 }
