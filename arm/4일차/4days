@@ -1,0 +1,84 @@
+startup 구동
+
+
+__initial_sp 스택만들기
+
+Reset_Handler		; Reset handler
+sysTick_Handler		; timer
+
+
+내부 인터럽트와 외부 인터럽트 의 차이 :  CPU 가 인식하느냐 못하느냐
+
+CPACR RW - Coprocessor Access Control Register
+소수점을 사용하지 못하면 dSP 사용 x, 리눅스 못함
+
+
+
+0xf << 20	20,21,22,23을 1111로 세팅한다. 
+str r1, [r0]
+소수점 활성화
+
+
+PLL 초기화 
+RCC Clock 
+
+
+HSI(internal high speed clock enable) 는 오실레이터 oscillator
+RCC_CFGR : 레지스터 0으로 초기화 
+
+RCC_PLLCFGR : 
+RCC->PLLCFGR = 0x24003010
+RCC_CIR : 
+
+리셋값을 조심하자 
+
+AHB : advanced high bus
+APB : advanced peripehral bus
+
+오실레이터가 발진하면 HSE 가 세팅
+
+전자기파는 무조건 교류 전자 
+HSE가 안정화되면 
+
+PLLP = 2, 4, 6, 9
+(모든 피드배 시스템
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

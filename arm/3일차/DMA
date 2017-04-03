@@ -1,3 +1,57 @@
+20.1 Overview
+DMA 컨트롤러는 CPU Operation의 백그라운드의 두개의 메모리 맵 사이의 데이터를 전송하는데 사용된다
+통상적으로 DMA는 
+* 내부 외부 데이터 메모리 사이의 데이터블록 전송
+* 내부 메모리 재구성
+* 외부 장치 서비스
+* 내부 프로그램 메모리의 페이지 프로그램 섹션
+DMA는 두개의 마스터 포트를 가지고 있기때문에 각 주소 영역에 사용할 포트를 나타내는 테이블을 보고 선택해야함
+
+CPU와 상관없이 전송하는걸 DMA
+
+20.1.1 Main Features
+CPU와 독립적인데이터 전송
+두개의 마스터 포트 - Microcontroller's Bus Matrix System 의 인터페이스에 대한 Port A and PortB
+최대 두개의 서로다른 채널에 대한 동시 전송 지원
+FIFO buffer 
+채널 제어 정보는 ECC에 의해 보호되는 RAM을 저장한다. 
+개별로 구동되는 다중 논리 채널
+채널 연결 기능
+다중 주변 장치 DMA 요청 
+하드웨어 소프트웨어 DMA 요청
+8, 16, 32 or 64-bit transactions supported
+Multiple addressing modes for source/destination
+Auto-initiation
+Power-management mode
+Memory Protection for the address range DMA can access with multiple configurable memory regions
+(refer datasheet for number of memory regions on your device)
+
+Packet Buffering 
+   FIFO 에 쓰여진 데이터는 FIFO의 OUTPUT에서 시스템이 데이터를 받아들일 준비가 될 때까지 저장할 수 있다. 특히 여러 개의 FIFO가 비연속적인 입력버스를 가지고 출력으로는 공통의 버스를 갖는 네트워크 스위칭 또는 라우팅에서 유용하게 사용된다.
+2. Frequency Coupling  데이터가 서로 다른 클럭 주파수를 갖는 시스템 사이에 통신될 때 사용된다.   
+   FIFO는 한 개의 시스템으로부터 데이터를 받고 다른 시스템으로 데이터를 전송한다. FIFO의 입력과 출력의 데이터 전송률은 Read와 Write 클럭 시그널에 의해 제어된다.
+
+3. Bus Matching
+   데이터 전송이 다른 버스 크기를 갖는 각각의 시스템 사이에서 이루어질 필요가 있을 때 사용된다. FIFO는 두 개의 시스템 사이에서 Bridge 역할을 한다. 
+
+20.1.1.1 Block Diagram
+Figure 20-1 gives a top view of the DMA internal architecture. DMA data read and write access happen
+through either Port A or B. Both FIFO buffers are each 4 levels deep and 64-bits wide thus allowing a
+maximum of 32 bytes to be buffered inside the DMA per channel. DMA requests go into the DMA that can
+trigger DMA transfers. Five interrupt request lines go out of the DMA to signal that a certain transfer status
+is reached. Register banks hold the memory mapped DMA configuration registers. Local RAM consists of
+DMA control packets and is secured by ECC. All the programming / configuration of the DMA controller is
+done via the Peripheral bus.
+port A 와 port B를 통해 DMA 데이터 접속, 
+두 FIFO 버퍼는 4 levels deep and 64-bits wide 이므로 DMA 채널안에 최대 32 바이트 를 버퍼링 할수 잇음
+DMA 요청은 DMA로 전달되어 DMA 전송을 트리거 할 수 있습니다.
+5 개의 인터럽트 요청 라인은 특정 전송 상태에 도달했음을 알리기 위해 DMA에서 빠져 나옵니다.
+레지스터 뱅크는 메모리 매핑 된 DMA 구성 레지스터를 보유
+로컬 RAM은 DMA 제어 패킷으로 구성되며 ECC로 보호됩니다. 
+DMA 컨트롤러의 모든 프로그래밍 / 구성은 주변 버스를 통해 수행됩니다.
+
+
+
 20.1.2 시스템 자원 매핑
 시스템 자원 매핑 의 DMA 포트 는 시스템 자원을 두개의 다른 DMA 포트에 매핑되는 방법을 보여준다
 따라서 다른 어플리케이션에서 하나의 자원으로의 데이터 전송은 반드시 아래의 테이블에 따라서 PARx register 를 setup 해야한다
@@ -8,105 +62,10 @@ port  B 	All peripherals, i.e. MibSPI registers, DCAN registers
 		All peripheral memories, i.e. MibSPI RAM, DCAN RAM
 
 예1) 주변장치 레지스터에 L2 Flash, L2 SRAM, EMIF 로 데이터전송 또는 주변장치 메모리, 
-	각각의 PARx Registers 0x1 에 write
-
-20.2 Module Operation
-DMA 는 master 와 독립적으로 행동
-각 채널은 FIFO중 하나의 데이터가 접속되는 동안 port A or B or both 에 읽고 쓰는 접속을 할떄 활용된다.
-모든 DMA 메모리 그리고 레지스터 접근은 user mode 에서 수행된다. 
-If the DMA writes to registers which are only accessible in privileged mode, the write will not be performed.
-DMA 레지스터 그리고 local RAM는 privilege mode 에서만 접근할수 잏다. 
-그러므로 DMA 스스로 리프로그램 할수없어
-
-20.2.1 메모리 공간
-DMA 컨트롤러는 data memory와 program memory 사이의 차이를 만들지 않아
-DMA 컨트롤러는 4 Gbyte 물리적 주소 맵 내에 공간으로부터 전송할수 있다.
-컨트롤 패시 스토어 
-
-20.2.2 DMA Data Access
-DMA 컨트롤러는 세 가지 수준의 세분화 수준의 데이터를 참조합니다.
-
-20.2.4 DMA Channel Control Packets
-각 논리적 채널에 상응하는 것은 고정 된 숫자 순서로 매핑되는 제어 패킷이다
-예를 들어, 제어 패킷 0은 채널 0에 대한 채널 정보를 저장합니다.
-DMA 요청은 20.2.7 절에서 설명 된 것처럼 개별 채널에 매핑 될 수 있습니다.
-DMA 요청과 채널 사이의 매핑스키마  그림 20-4에 나와 있습니다.
-각각 컨트롤 패킷은 아홉 필드를 포함
-처음 6 개의 필드는 1 차 제어 패킷을 구성하며 DMA 설정 중에 프로그래밍 할 수 있습니다.
-마지막 세 필드는 작동 제어 패킷을 구성하며 CPU에서만 읽을 수 있습니다. working control packets은 채널의 자동 초기화 및 우선 순위 지정을 지원하는 데 사용
-제어 패킷의 구성은 그림 20-5에 나와 있습니다.
-
-primary control packet은 소스 어드레스(read), 목적지 어드레스(write), 전송 카운트, 요소 / 프레임 인덱스 포인터 및 채널 구성과 같은 채널 정보를 포함한다.
-소스 주소, 대상 주소 및 전송 횟수에도 각각의 working images가 있습니다. 
-작업 이미지의 세 필드는 작동 제어 패킷을 구성하며 쓰기 액세스에서 CPU가 액세스 할 수 없습니다.
-
-DMA 채널이 처을 위해 처음 선택되면 다음 프로세스가 발생합니다.
-1 primary control packet은 먼저 DMA 상태 머신에 의해 판독된다.
-2. 채널이 조정되면 현재 소스 주소, 대상 주소 및 전송 횟수가 각각의 작업 이미지로 복사됩니다.
-3. 채널이 DMA에 의해 다시 서비스 될 때, state machine는 entire block 전송이 끝날 때까지 DMA 트랜잭션을 계속하기 위해 primary control packet과 working control packets을 읽습니다.
-
-동일한 채널이 다시 요구 될 때, state machine는 primary control packet만을 읽은 다음 다시 위에서 설명한 동일한 프로세스를 계속함으로써 다시 시작됩니다. 
-사용자 소프트웨어는 primary control packet의 내용이 절대로 손실되지 않기 때문에 제어 패킷을 다시 설정할 필요가 없습니다.
- 제어 패킷의 작업 이미지는 소프트웨어 오버 헤드와 DMA 모듈과의 상호 작용을 최소화합니다.
-
-채널 제어 패킷의 내용을 변경하면 채널이 보류 중 상태 인 경우 해당 보류중인 비트 (섹션 20.3.1.2)가 지워집니다. 활성 채널의 제어 패킷 (20.3.1.3 절 참조)이 변경되면 채널은 즉시 중재 경계에서 중단됩니다. 동일한 채널이 다시 트리거되면 새로운 제어 패킷 정보로 시작됩니다.
-
-20.2.4.1 Initial Source Address
-
-20.2.4.2 Initial Destination Address
-
-20.2.4.3 Initial Transfer Count
-전송 횟수 필드는 두 부분으로 구성됩니다. 프레임 전송 카운트 값 및 요소 전송 카운트 값. 각 카운트 값은 13 비트 폭입니다. 단일 블록 전송으로 최대 512MB의 데이터를 전송할 수 있습니다. 요소 수와 프레임 수는 소스 데이터 구조에 따라 프로그래밍됩니다.
-T sz = E rsz • E tc • F tc
+	각각의 PARx Registers 0x1 에 write(Port A read, Port B write )
 
 
-20.2.4.4 Channel Configuration Word
-채널 구성은 다음 개별 매개 변수를 정의합니다.
-
-
-
-
-
-
-20.2.4.5 Element/Frame Index Pointer
-구조화 된 방식으로 RAM 및 주소 레지스터에 여러 유형의 버퍼를 만들 수있는 4 개의 인덱스 포인터가 있습니다.
-  소스 및 목적지에 대한 요소 인덱스 포인터 및 소스 및 목적지에 대한 프레임 인덱스 포인터를 포함한다.
-
-소스 및 / 또는 목적지에 대한 요소 인덱스 포인터는 각각의 요소가 소스 및 / 또는 목적지 어드레스로 전송 된 후에 추가 될 오프셋을 정의한다. 소스 및 / 또는 목적지에 대한 프레임 인덱스 포인터는 요소 카운트가 0에 도달 한 후에 소스 및 / 또는 목적지 어드레스에 추가 될 오프셋을 정의한다. 요소 및 프레임 인덱스 포인터는 오프셋 바이트 수로 정의해야합니다. 그만큼
-DMA 컨트롤러는 요소 크기에 따라 요소 / 프레임 인덱스 번호를 조정하지 않습니다. 인덱스 2는 요소 크기가 64 비트 일 때 주소를 2 씩 증가시키고 16으로 증가시키지 않음을 의미합니다.
-
-20.2.4.6 Current Source Address
-
-
-20.2.4.7 Current Destination Address
-
-20.2.4.8 Current Transfer Count
-현재 전송 카운트는 블록에 전송 될 나머지 요소 수를 저장합니다. 소스 위치에서 읽은 각 요소에 대해 하나씩 감소합니다.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2.2.4 On-Chip SRAM
+* On-Chip SRAM
 
 몇몇 SRAM Module 은 포함된 Module 의 기능을 지원하는 Device 상에서 구현된다.
 
@@ -128,10 +87,7 @@ TI 는 자동 초기화에 앞서 SRAM 모듈에서 실행될 PBIST 절차를 �
 다음 섹션에서 이러한 두 가지 작업을 설명한다.
 
 
-
-
-
-2.2.3.2 Flash 접근을 위한 ECC 보호
+Flash 접근을 위한 ECC 보호
 
 TMS570LC43x Microcontroller 는 SECDED(Single Error Correction Double Error Detection) Logic 에
 전념함으로써 On-Chip Level 에서 Flash Memory 로의 모든 접근을 보호한다.
@@ -152,3 +108,138 @@ EEPROM Emulation Flash Bank 7 을 위한 0xF0100000 시작 영역에 맵핑된�
 Note :
 
 CPU 내부의 SECDED Logic 은 AXI-M 과 AXI-S 인터페이스를 영구적으로 사용할 수 있다.
+
+
+
+
+
+
+
+
+
+20.2 Module Operation
+DMA 는 master 와 독립적으로 행동
+각 채널은 FIFO중 하나의 데이터가 접속되는 동안 port A or B or both 에 읽고 쓰는 접속을 할떄 활용된다.
+모든 DMA 메모리 그리고 레지스터 접근은 user mode 에서 수행된다. 
+If the DMA writes to registers which are only accessible in privileged mode, the write will not be performed.
+
+DMA 레지스터 그리고 local RAM는 privilege mode 에서만 접근할수 잏다. 
+그러므로 DMA 스스로 리프로그램 할수없어
+
+중재 : 채널은 높은 우선순위 채널 서비스에 따라서 잠시 중단, 채널이 즉시 작동하지 않을 때.
+중재의 범위 : 
+
+20.2.1 메모리 공간
+DMA 컨트롤러는 data memory와 program memory 사이의 차이를 만들지 않아
+DMA 컨트롤러는 4 Gbyte 물리적 주소 맵 내에 공간으로부터 전송할수 있다.
+컨트롤 패킷은 source address, destination address, transfer count and control attributes for
+each channel. 저장한다. 
+
+
+20.2.2 DMA Data Access
+DMA 컨트롤러는 세 가지 수준의 세분화 수준의 데이터를 참조
+Element : 프로그램된 data type 에 의존 , 8, 16, 32, 64bit value. type은 개별적 source(read) and destination(write) 를 개별적으로 선택할수 잇다. element는 인터럽트 되지않는다
+Frame : 하나 or 이상의 element 를 unit으로 전송, element transfer사이에서 인터럽트 
+Block : 각 채널은 하나의 블록 데이터로 전송할수잇다
+
+
+20.2.4 DMA Channel Control Packets
+각 논리적 채널에 상응하는 것은 고정 된 숫자 순서로 매핑되는 제어 패킷이다
+예를 들어, 제어 패킷 0은 채널 0에 대한 채널 정보를 저장
+DMA 요청은 20.2.7 절에서 설명 된 것처럼 개별 채널에 매핑 
+DMA 요청과 채널 사이의 매핑스키마  figure 20-4
+각각 컨트롤 패킷은 아홉 필드를 포함
+처음 6 개의 필드는 1 차 제어 패킷을 구성하며 DMA 설정 중에 프로그래밍 
+마지막 세 필드는 작동 제어 패킷을 구성하며 CPU에서만 읽을 수 있습니다. working control packets은 채널의 자동 초기화 및 우선 순위 지정을 지원하는 데 사용
+제어 패킷의 구성은 figure 20.5
+
+primary control packet은 소스 어드레스(read), 목적지 어드레스(write), 전송 카운트, 요소 / 프레임 인덱스 포인터 및 채널 구성과 같은 채널 정보를 포함한다.
+소스 주소, 대상 주소 및 전송 횟수에도 각각의 working images가 있습니다. 
+작업 이미지의 세 필드는 작동 제어 패킷을 구성하며 쓰기 액세스에서 CPU가 액세스 할 수 없습니다.
+
+DMA 채널이 처을 위해 처음 선택되면 다음 프로세스가 발생합니다.
+1 primary control packet은 먼저 DMA 상태 머신에 의해 판독된다.
+2. 채널이 조정되면 현재 소스 주소, 대상 주소 및 전송 횟수가 각각의 작업 이미지로 복사됩니다.
+3. 채널이 DMA에 의해 다시 서비스 될 때, state machine는 entire block 전송이 끝날 때까지 DMA 트랜잭션을 계속하기 위해 primary control packet과 working control packets을 읽습니다.
+
+동일한 채널이 다시 요구 될 때, state machine는 primary control packet만을 읽은 다음 다시 위에서 설명한 동일한 프로세스를 계속함으로써 다시 시작됩니다. 
+사용자 소프트웨어는 primary control packet의 내용이 절대로 손실되지 않기 때문에 제어 패킷을 다시 설정할 필요가 없습니다.
+ 제어 패킷의 작업 이미지는 소프트웨어 오버 헤드와 DMA 모듈과의 상호 작용을 최소화합니다.
+
+채널 제어 패킷의 내용을 변경하면 채널이 보류 중 상태 인 경우 해당 보류중인 비트 (섹션 20.3.1.2)가 지워집니다. 활성 채널의 제어 패킷 (20.3.1.3 절 참조)이 변경되면 채널은 즉시 중재 경계에서 중단됩니다. 동일한 채널이 다시 트리거되면 새로운 제어 패킷 정보로 시작됩니다.
+
+20.2.4.1 Initial Source Address
+32bit
+
+20.2.4.2 Initial Destination Address
+32bit
+
+20.2.4.3 Initial Transfer Count
+전송 횟수 필드는 두 부분으로 구성됩니다.
+ 프레임 전송 카운트 값 및 요소 전송 카운트 값. 
+각 카운트 값은 13 비트 폭입니다. 
+단일 블록 전송으로 최대 512MB의 데이터를 전송할 수 있습니다. 
+요소 수와 프레임 수는 소스 데이터 구조에 따라 프로그래밍됩니다.
+T sz = E rsz • E tc • F tc
+
+
+20.2.4.4 Channel Configuration Word
+채널 구성은 다음 개별 매개 변수를 정의합니다.
+
+
+
+
+
+20.2.4.5 Element/Frame Index Pointer
+구조화 된 방식으로 RAM 및 주소 레지스터에 여러 유형의 버퍼를 만들 수 있는 4개의 인덱스 포인터
+소스 및 목적지에 대한 요소 인덱스 포인터 및 소스 및 목적지에 대한 프레임 인덱스 포인터를 포함한다.
+
+소스 및 / 또는 목적지에 대한 요소 인덱스 포인터는 각각의 요소가 소스 및 / 또는 목적지 어드레스로 전송 된 후에 추가 될 오프셋을 정의한다. 소스 및 / 또는 목적지에 대한 프레임 인덱스 포인터는 요소 카운트가 0에 도달 한 후에 소스 및 / 또는 목적지 어드레스에 추가 될 오프셋을 정의한다. 요소 및 프레임 인덱스 포인터는 오프셋 바이트 수로 정의해야합니다. 그만큼
+DMA 컨트롤러는 요소 크기에 따라 요소 / 프레임 인덱스 번호를 조정하지 않습니다. 
+인덱스 2는 요소 크기가 64 비트 일 때 주소를 2 씩 증가시키고 16으로 증가시키지 않음을 의미합니다.
+
+
+20.2.4.6 Current Source Address
+current source address field는 DMA 처리 동안의 작업중 source address 포함
+indexing mode 또는 addressing mode 
+
+
+20.2.4.7 Current Destination Address
+current Destination address field는 DMA 처리 동안의 작업중 source address 포함
+indexing mode 또는 addressing mode 
+
+
+20.2.4.8 Current Transfer Count
+현재 전송 카운트는 블록에 전송 될 나머지 요소 수를 저장합니다. 소스 위치에서 읽은 각 요소에 대해 하나씩 감소합니다.
+
+
+20.2.5 Priority Queue
+
+사용자는 우선 순위 대기열에 채널을 할당하여 중재 중 요청 처리를 용이하게 할 수 있습니다. 
+포트에는 우선 순위가 높은 대기열과 우선 순위가 낮은 대기열이라는 두 개의 우선 순위 대기열이 있습니다.
+각 대기열은 고정 또는 순환 우선 순위 체계를 따르도록 구성 할 수 있습니다. 
+* 고정 우선 순위는 채널 번호가 낮을수록 (그림 20-9), 우선 순위가 높아집니다. 
+* 회전 우선 순위는 라운드 로빈 방식을 기반으로합니다. 
+처음에는 우선순위 리스트가 fixed priority scheme에 의해서 정렬된다.
+높은 우선순위 큐에 의해서 할당된 채널은 항상 이전에 낮은 우선순위에 의해 서비스된 채널의 선택된 우선순위 스키마에 따라서 처음 서비스된다. 
+
+처음에는 우선 순위 목록이 고정 된 우선 순위 체계로 우선 순위가 높은 대기열에 할당 된 채널은 우선 순위가 낮은 대기열의 채널이 서비스되기 전에 항상 선택된 우선 순위 구성표에 따라 먼저 서비스됩니다. 표 20-1은 다른 우선 순위 체계에 따라 중재가 수행되는 방법을 설명합니다.
+
+
+* 우선순위가 높은 채널은 fixed arbitration scheme
+  우선순위가 낮은 채널은 rotating priority scheme
+
+
+20.2.6 Data Packing and Unpacking
+dma 컨트롤러는 자동적으로 write 엘리먼트 사이즈로부터 다른 엘리먼트 사이즈를 read할때 필수적으로 data packing and un packing 한다. 
+data packing 은 write element size 보다 read element size 작을때 요청된다. 
+data unpacking 은 read element size가 write element size 보다 클때 요청된다. 
+두개가 같은때는 no packing 
+
+
+20.2.12 FIFO Buffer
+
+DMA 는 FIFO 가 empty일때만 스위칭 할수잇다. 
+
+
+
