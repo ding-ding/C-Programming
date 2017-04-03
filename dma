@@ -1,0 +1,8 @@
+DMA(Direct Memory Access)
+* 두개의 하드웨어 디바이스 간의 데이터 블록을 Transfer하는 트릭으로 사용되는 DMA
+
+* Source, Destination, 전송할 바이트 수 만 주면 알아서 Data를 전송해 주고 Processor가 전혀 신경쓰지 않아도 된다. 
+
+* DMA는 모든 Data전송이 끝나면 HW Interrupt로 CPU에게 완료를 알려주는 구조
+
+* 
